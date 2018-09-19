@@ -273,7 +273,7 @@ function dropPiece(){
 
 function oneDownPiece(){
     
-    var cantGoDownNoMore = false;
+    var blockBelow = false;
     /*
     //check if the floor is beneath us
     for(var i = 0; i < placingPiece.length; i++){
@@ -306,7 +306,7 @@ function oneDownPiece(){
         }
     }*/
     
-    if(!cantGoDownNoMore){
+    if(!blockBelow){
         for(var i = 0; i < placingPiece.length; i++){
             placingPiece[i].ypos += 1;
         }
