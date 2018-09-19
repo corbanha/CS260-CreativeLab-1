@@ -1,12 +1,12 @@
 
-var GAME_WIDTH = 480;
-var GAME_HEIGHT = 720;
+var GAME_WIDTHpx = 480;
+var GAME_HEIGHTpx = 720;
 var GAME_BOARD_WIDTH = 20;
 var GAME_BOARD_HEIGHT = 35;
 
-var blockSizeX = (GAME_WIDTH / GAME_BOARD_WIDTH);
-var blockSizeY = (GAME_HEIGHT / GAME_BOARD_HEIGHT);
-var centerTopBlock = (GAME_BOARD_WIDTH / 2) * blockSizeX;
+var blockSizeXpx = (GAME_WIDTHpx / GAME_BOARD_WIDTH);
+var blockSizeYpx = (GAME_HEIGHTpx / GAME_BOARD_HEIGHT);
+var centerTopBlockpx = (GAME_BOARD_WIDTH / 2) * blockSizeXpx;
 
 var dropInterval; //used for the drop by the spacebar
 var lastColor = "red";
@@ -54,8 +54,8 @@ function test(){
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
-        this.canvas.width = GAME_WIDTH;
-        this.canvas.height = GAME_HEIGHT;
+        this.canvas.width = GAME_WIDTHpx;
+        this.canvas.height = GAME_HEIGHTpx;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
     },
@@ -68,15 +68,11 @@ var myGameArea = {
 }
 
 function block (x, y, color){ //x, y, color
-    this.blockWidth = GAME_WIDTH / GAME_BOARD_WIDTH;
-    this.blockHeight = GAME_HEIGHT / GAME_BOARD_HEIGHT;
-    this.x = x;
-    this.y = y;
+    this.blockWidth = GAME_WIDTHpx / GAME_BOARD_WIDTH;
+    this.blockHeight = GAME_HEIGHTpx / GAME_BOARD_HEIGHT;
+    this.xpos = x;
+    this.ypos = y;
     this.color = color;
-    
-    //context = myGameArea.getContext();
-    //context.fillStyle = this.color;
-    //context.fillRect(this.x, this.y, this.blockWidth, this.blockHeight);
     return this;
 }
 
@@ -84,9 +80,10 @@ function block (x, y, color){ //x, y, color
 function moveDownPlacingPiece(){
     
     var cantGoDownNoMore = false;
+    /*
     //check if the floor is beneath us
     for(var i = 0; i < placingPiece.length; i++){
-        if(placingPiece[i].y + blockSizeY * 2> GAME_HEIGHT){
+        if(placingPiece[i].ypos * blockSizeYpx + blockSizeYpx * 2 > GAME_HEIGHTpx){
             cantGoDownNoMore = true;
             break;
         }
@@ -95,8 +92,8 @@ function moveDownPlacingPiece(){
     //check if any other blocks are directly beneath us
     for(var i = 0; i < placingPiece.length && !cantGoDownNoMore; i++){
         //coords of the block below us:
-        var x = placingPiece[i].x;
-        var y = placingPiece[i].y + blockSizeY;
+        var x = placingPiece[i].xpos;
+        var y = placingPiece[i].ypos + blockSizeYpx;
         
         //make sure it's not one of our own pieces:
         for(var j = 0; j < placingPiece.length; j++){
@@ -113,15 +110,12 @@ function moveDownPlacingPiece(){
                 cantGoDownNoMore = true;
             }
         }
-    }
-    
-    
-    
+    }*/
     
     if(!cantGoDownNoMore){
         for(var i = 0; i < placingPiece.length; i++){
-            placingPiece[i].y += placingPiece[i].blockHeight;
-            if(placingPiece[i].y >= GAME_HEIGHT) placingPiece[i].y = GAME_HEIGHT;
+            placingPiece[i].ypos += 1;
+            if(placingPiece[i].ypos >= GAME_BOARD_HEIGHT) placingPiece[i].ypos = GAME_BOARD_HEIGHT;
            
         }
         redrawAllBlocks()
@@ -144,13 +138,13 @@ function redrawAllBlocks(){
     
     for(var i = 0; i < placingPiece.length; i++){
         context.fillStyle = placingPiece[i].color;
-        context.fillRect(placingPiece[i].x, placingPiece[i].y, placingPiece[i].blockWidth, placingPiece[i].blockHeight);
+        context.fillRect(placingPiece[i].xpos * blockSizeXpx, placingPiece[i].ypos * blockSizeYpx, placingPiece[i].blockWidth, placingPiece[i].blockHeight);
     }
     
     
     for(var i = 0; i < placedPieces.length; i++){
         context.fillStyle = placedPieces[i].color;
-        context.fillRect(placedPieces[i].x, placedPieces[i].y, placedPieces[i].blockWidth, placedPieces[i].blockHeight);
+        context.fillRect(placedPieces[i].xpos * blockSizeXpx, placedPieces[i].ypos * blockSizeYpx, placedPieces[i].blockWidth, placedPieces[i].blockHeight);
     }
 }
 
@@ -176,53 +170,55 @@ function addPiece(){
     }
     lastColor = color;
     
+    var centerBlock = GAME_BOARD_WIDTH / 2;
+    
     
     if(type == 0){
         //4 x 1
-        placingPiece.push(new block(centerTopBlock - blockSizeX, 0, color));
-        placingPiece.push(new block(centerTopBlock, 0, color));
-        placingPiece.push(new block(centerTopBlock + blockSizeX, 0, color));
-        placingPiece.push(new block(centerTopBlock + blockSizeX * 2, 0, color));
+        placingPiece.push(new block(centerBlock - 1, 0, color));
+        placingPiece.push(new block(centerBlock, 0, color));
+        placingPiece.push(new block(centerBlock + 1, 0, color));
+        placingPiece.push(new block(centerBlock + 2, 0, color));
         
     }else if(type == 1){
         //2 x 2
-        placingPiece.push(new block(centerTopBlock - blockSizeX, 0, color));
-        placingPiece.push(new block(centerTopBlock, 0, color));
-        placingPiece.push(new block(centerTopBlock - blockSizeX, blockSizeY, color));
-        placingPiece.push(new block(centerTopBlock, blockSizeY, color));
+        placingPiece.push(new block(centerBlock - 1, 0, color));
+        placingPiece.push(new block(centerBlock, 0, color));
+        placingPiece.push(new block(centerBlock - 1, 1, color));
+        placingPiece.push(new block(centerBlock, 1, color));
     }else if(type == 2){
         // L
-        placingPiece.push(new block(centerTopBlock, 0, color));
-        placingPiece.push(new block(centerTopBlock, blockSizeY, color));
-        placingPiece.push(new block(centerTopBlock, blockSizeY * 2, color));
-        placingPiece.push(new block(centerTopBlock + blockSizeX, blockSizeY * 2, color));
+        placingPiece.push(new block(centerBlock, 0, color));
+        placingPiece.push(new block(centerBlock, 1, color));
+        placingPiece.push(new block(centerBlock, 2, color));
+        placingPiece.push(new block(centerBlock + 1, 2, color));
     }
     else if(type == 3){
         // opposite L
-        placingPiece.push(new block(centerTopBlock, 0, color));
-        placingPiece.push(new block(centerTopBlock, blockSizeY, color));
-        placingPiece.push(new block(centerTopBlock, blockSizeY * 2, color));
-        placingPiece.push(new block(centerTopBlock - blockSizeX, blockSizeY * 2, color));
+        placingPiece.push(new block(centerBlock, 0, color));
+        placingPiece.push(new block(centerBlock, 1, color));
+        placingPiece.push(new block(centerBlock, 2, color));
+        placingPiece.push(new block(centerBlock - 1, 2, color));
     }
     else if(type == 4){
         // T
-        placingPiece.push(new block(centerTopBlock, 0, color));
-        placingPiece.push(new block(centerTopBlock + blockSizeX, blockSizeY, color));
-        placingPiece.push(new block(centerTopBlock, blockSizeY, color));
-        placingPiece.push(new block(centerTopBlock - blockSizeX, blockSizeY, color));
+        placingPiece.push(new block(centerBlock, 0, color));
+        placingPiece.push(new block(centerBlock + 1, 1, color));
+        placingPiece.push(new block(centerBlock, 1, color));
+        placingPiece.push(new block(centerBlock - 1, 1, color));
     }
     else if(type == 5){
         // -|_
-        placingPiece.push(new block(centerTopBlock, 0, color));
-        placingPiece.push(new block(centerTopBlock - blockSizeX, 0, color));
-        placingPiece.push(new block(centerTopBlock, blockSizeY, color));
-        placingPiece.push(new block(centerTopBlock + blockSizeX, blockSizeY, color));
+        placingPiece.push(new block(centerBlock, 0, color));
+        placingPiece.push(new block(centerBlock - 1, 0, color));
+        placingPiece.push(new block(centerBlock, 1, color));
+        placingPiece.push(new block(centerBlock + 1, 1, color));
     }else{
         // _|-
-        placingPiece.push(new block(centerTopBlock, 0, color));
-        placingPiece.push(new block(centerTopBlock + blockSizeX, 0, color));
-        placingPiece.push(new block(centerTopBlock, blockSizeY, color));
-        placingPiece.push(new block(centerTopBlock - blockSizeX, blockSizeY, color));
+        placingPiece.push(new block(centerBlock, 0, color));
+        placingPiece.push(new block(centerBlock + 1, 0, color));
+        placingPiece.push(new block(centerBlock, 1, color));
+        placingPiece.push(new block(centerBlock - 1, 1, color));
     }
     
     /*
@@ -236,14 +232,14 @@ function addPiece(){
 
 function movePieceRight(){
     
-    var farthestRightPiece = 0;
+    var farthestRightPiecepx = 0;
     for(var i = 0; i < placingPiece.length; i++){
-        if(placingPiece[i].x > farthestRightPiece) farthestRightPiece = placingPiece[i].x;
+        if(placingPiece[i].xpos * blockSizeXpx> farthestRightPiecepx) farthestRightPiecepx = placingPiece[i].xpos * blockSizeXpx;
     }
     
-    if(farthestRightPiece + blockSizeX < GAME_WIDTH){
+    if(farthestRightPiecepx + blockSizeXpx < GAME_WIDTHpx){
         for(var i = 0; i < placingPiece.length; i++){
-            placingPiece[i].x += blockSizeX;
+            placingPiece[i].xpos += 1; //move it right
         }
         redrawAllBlocks()
     }
@@ -251,15 +247,15 @@ function movePieceRight(){
 
 function movePieceLeft(){
     
-    var farthestLeftPiece = GAME_WIDTH;
+    var farthestLeftPiece = GAME_WIDTHpx;
     
     for(var i = 0; i < placingPiece.length; i++){
-        if(placingPiece[i].x < farthestLeftPiece) farthestLeftPiece = placingPiece[i].x;
+        if(placingPiece[i].xpos * blockSizeXpx < farthestLeftPiece) farthestLeftPiece = placingPiece[i].xpos * blockSizeXpx;
     }
     
-    if(farthestLeftPiece - blockSizeX >= 0){
+    if(farthestLeftPiece - blockSizeXpx >= 0){
         for(var i = 0; i < placingPiece.length; i++){
-            placingPiece[i].x -= blockSizeX;
+            placingPiece[i].xpos -= 1;
         }
         redrawAllBlocks()
     }
@@ -278,9 +274,10 @@ function dropPiece(){
 function oneDownPiece(){
     
     var cantGoDownNoMore = false;
+    /*
     //check if the floor is beneath us
     for(var i = 0; i < placingPiece.length; i++){
-        if(placingPiece[i].y + blockSizeY * 2> GAME_HEIGHT){
+        if(placingPiece[i].y + blockSizeYpx * 2> GAME_HEIGHTpx){
             cantGoDownNoMore = true;
             break;
         }
@@ -290,7 +287,7 @@ function oneDownPiece(){
     for(var i = 0; i < placingPiece.length && !cantGoDownNoMore; i++){
         //coords of the block below us:
         var x = placingPiece[i].x;
-        var y = placingPiece[i].y + blockSizeY;
+        var y = placingPiece[i].y + blockSizeYpx;
         
         //make sure it's not one of our own pieces:
         for(var j = 0; j < placingPiece.length; j++){
@@ -307,11 +304,11 @@ function oneDownPiece(){
                 cantGoDownNoMore = true;
             }
         }
-    }
+    }*/
     
     if(!cantGoDownNoMore){
         for(var i = 0; i < placingPiece.length; i++){
-            placingPiece[i].y += blockSizeY;
+            placingPiece[i].ypos += 1;
         }
         redrawAllBlocks()
     }else{
