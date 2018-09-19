@@ -1,8 +1,10 @@
 
 var GAME_WIDTHpx = 480;
 var GAME_HEIGHTpx = 720;
-var GAME_BOARD_WIDTH = 20;
-var GAME_BOARD_HEIGHT = 35;
+var GAME_BOARD_WIDTH = 12;
+var GAME_BOARD_HEIGHT = 25;
+
+var gameTickMils = 350;
 
 var blockSizeXpx = (GAME_WIDTHpx / GAME_BOARD_WIDTH);
 var blockSizeYpx = (GAME_HEIGHTpx / GAME_BOARD_HEIGHT);
@@ -18,8 +20,7 @@ var placedPieces = [];
 function test(){
     myGameArea.start();
     
-    setInterval(moveDownPlacingPiece, 500);
-    
+    setInterval(moveDownPlacingPiece, gameTickMils);
     
     document.getElementById("startButton").hidden = true;
     
@@ -46,7 +47,6 @@ function test(){
         }
         
     });
-    
     
     addPiece();
 }
@@ -79,44 +79,33 @@ function block (x, y, color){ //x, y, color
 /*moves down the piece being placed by 1 */
 function moveDownPlacingPiece(){
     
-    var cantGoDownNoMore = false;
-    /*
-    //check if the floor is beneath us
-    for(var i = 0; i < placingPiece.length; i++){
-        if(placingPiece[i].ypos * blockSizeYpx + blockSizeYpx * 2 > GAME_HEIGHTpx){
-            cantGoDownNoMore = true;
-            break;
-        }
-        
-    }
-    //check if any other blocks are directly beneath us
-    for(var i = 0; i < placingPiece.length && !cantGoDownNoMore; i++){
-        //coords of the block below us:
-        var x = placingPiece[i].xpos;
-        var y = placingPiece[i].ypos + blockSizeYpx;
-        
-        //make sure it's not one of our own pieces:
-        for(var j = 0; j < placingPiece.length; j++){
-            if(i == j) continue;
-            if(placingPiece[j].x - x < .01 && placingPiece[j].y - y < .01){
-                //it's ourself, no worries
-            }
-        }
-        
-        //now we check if it's another block:
-        for(var j = 0; j < placedPieces.length; j++){
-            if(placedPieces[j].x - x < .01 && placedPieces[j].y - y < .01){
-                //a piece is below us!
-                cantGoDownNoMore = true;
-            }
-        }
-    }*/
+    var blockBelow = false;
     
-    if(!cantGoDownNoMore){
+    
+    for(var i = 0; i < placingPiece.length && !blockBelow; i++){
+        
+        if(placingPiece[i].ypos + 1 >= GAME_BOARD_HEIGHT){
+            
+            //we're going to hit the floor!
+            blockBelow = true;
+            break;
+        }else{
+            //let's check if there's another block below us that is placed already
+            for(var j = 0; j < placedPieces.length; j++){
+                if(placedPieces[j].xpos == placingPiece[i].xpos && placedPieces[j].ypos == placingPiece[i].ypos + 1){
+                    //there's a block below us
+                    blockBelow = true;
+                    break;
+                }
+            }
+        }
+    }
+    
+    if(!blockBelow){
         for(var i = 0; i < placingPiece.length; i++){
+            //move the placing piece down by one
             placingPiece[i].ypos += 1;
             if(placingPiece[i].ypos >= GAME_BOARD_HEIGHT) placingPiece[i].ypos = GAME_BOARD_HEIGHT;
-           
         }
         redrawAllBlocks()
     }else{
@@ -171,54 +160,54 @@ function addPiece(){
     lastColor = color;
     
     var centerBlock = GAME_BOARD_WIDTH / 2;
-    
+    var yOffset = -5;
     
     if(type == 0){
         //4 x 1
-        placingPiece.push(new block(centerBlock - 1, 0, color));
-        placingPiece.push(new block(centerBlock, 0, color));
-        placingPiece.push(new block(centerBlock + 1, 0, color));
-        placingPiece.push(new block(centerBlock + 2, 0, color));
+        placingPiece.push(new block(centerBlock - 1, 0 + yOffset, color));
+        placingPiece.push(new block(centerBlock, 0 + yOffset, color));
+        placingPiece.push(new block(centerBlock + 1, 0 + yOffset, color));
+        placingPiece.push(new block(centerBlock + 2, 0 + yOffset, color));
         
     }else if(type == 1){
         //2 x 2
-        placingPiece.push(new block(centerBlock - 1, 0, color));
-        placingPiece.push(new block(centerBlock, 0, color));
-        placingPiece.push(new block(centerBlock - 1, 1, color));
-        placingPiece.push(new block(centerBlock, 1, color));
+        placingPiece.push(new block(centerBlock - 1, 0 + yOffset, color));
+        placingPiece.push(new block(centerBlock, 0 + yOffset, color));
+        placingPiece.push(new block(centerBlock - 1, 1 + yOffset, color));
+        placingPiece.push(new block(centerBlock, 1 + yOffset, color));
     }else if(type == 2){
         // L
-        placingPiece.push(new block(centerBlock, 0, color));
-        placingPiece.push(new block(centerBlock, 1, color));
-        placingPiece.push(new block(centerBlock, 2, color));
-        placingPiece.push(new block(centerBlock + 1, 2, color));
+        placingPiece.push(new block(centerBlock, 0 + yOffset, color));
+        placingPiece.push(new block(centerBlock, 1 + yOffset, color));
+        placingPiece.push(new block(centerBlock, 2 + yOffset, color));
+        placingPiece.push(new block(centerBlock + 1, 2 + yOffset, color));
     }
     else if(type == 3){
         // opposite L
-        placingPiece.push(new block(centerBlock, 0, color));
-        placingPiece.push(new block(centerBlock, 1, color));
-        placingPiece.push(new block(centerBlock, 2, color));
-        placingPiece.push(new block(centerBlock - 1, 2, color));
+        placingPiece.push(new block(centerBlock, 0 + yOffset, color));
+        placingPiece.push(new block(centerBlock, 1 + yOffset, color));
+        placingPiece.push(new block(centerBlock, 2 + yOffset, color));
+        placingPiece.push(new block(centerBlock - 1, 2 + yOffset, color));
     }
     else if(type == 4){
         // T
-        placingPiece.push(new block(centerBlock, 0, color));
-        placingPiece.push(new block(centerBlock + 1, 1, color));
-        placingPiece.push(new block(centerBlock, 1, color));
-        placingPiece.push(new block(centerBlock - 1, 1, color));
+        placingPiece.push(new block(centerBlock, 0 + yOffset, color));
+        placingPiece.push(new block(centerBlock + 1, 1 + yOffset, color));
+        placingPiece.push(new block(centerBlock, 1 + yOffset, color));
+        placingPiece.push(new block(centerBlock - 1, 1 + yOffset, color));
     }
     else if(type == 5){
         // -|_
-        placingPiece.push(new block(centerBlock, 0, color));
-        placingPiece.push(new block(centerBlock - 1, 0, color));
-        placingPiece.push(new block(centerBlock, 1, color));
-        placingPiece.push(new block(centerBlock + 1, 1, color));
+        placingPiece.push(new block(centerBlock, 0 + yOffset, color));
+        placingPiece.push(new block(centerBlock - 1, 0 + yOffset, color));
+        placingPiece.push(new block(centerBlock, 1 + yOffset, color));
+        placingPiece.push(new block(centerBlock + 1, 1 + yOffset, color));
     }else{
         // _|-
-        placingPiece.push(new block(centerBlock, 0, color));
-        placingPiece.push(new block(centerBlock + 1, 0, color));
-        placingPiece.push(new block(centerBlock, 1, color));
-        placingPiece.push(new block(centerBlock - 1, 1, color));
+        placingPiece.push(new block(centerBlock, 0 + yOffset, color));
+        placingPiece.push(new block(centerBlock + 1, 0 + yOffset, color));
+        placingPiece.push(new block(centerBlock, 1 + yOffset, color));
+        placingPiece.push(new block(centerBlock - 1, 1 + yOffset, color));
     }
     
     /*
@@ -232,14 +221,28 @@ function addPiece(){
 
 function movePieceRight(){
     
-    var farthestRightPiecepx = 0;
-    for(var i = 0; i < placingPiece.length; i++){
-        if(placingPiece[i].xpos * blockSizeXpx> farthestRightPiecepx) farthestRightPiecepx = placingPiece[i].xpos * blockSizeXpx;
+    var blockToRight = false;
+    
+    for(var i = 0; i < placingPiece.length && !blockToRight; i++){
+        if(placingPiece[i].xpos + 1 >= GAME_BOARD_WIDTH){
+            //we're going to hit the left side wall
+            blockToRight = true;
+            break;
+        }else{
+            //we're going to hit another block that is on the left
+            for(var j = 0; j < placedPieces.length; j++){
+                if(placedPieces[j].xpos == placingPiece[i].xpos + 1 && placedPieces[j].ypos == placingPiece[i].ypos){
+                    //there's a block to the left of us
+                    blockToRight = true;
+                    break;
+                }
+            }
+        }
     }
     
-    if(farthestRightPiecepx + blockSizeXpx < GAME_WIDTHpx){
+    if(!blockToRight){
         for(var i = 0; i < placingPiece.length; i++){
-            placingPiece[i].xpos += 1; //move it right
+            placingPiece[i].xpos += 1;
         }
         redrawAllBlocks()
     }
@@ -247,20 +250,32 @@ function movePieceRight(){
 
 function movePieceLeft(){
     
-    var farthestLeftPiece = GAME_WIDTHpx;
     
-    for(var i = 0; i < placingPiece.length; i++){
-        if(placingPiece[i].xpos * blockSizeXpx < farthestLeftPiece) farthestLeftPiece = placingPiece[i].xpos * blockSizeXpx;
+    var blockToLeft = false;
+    
+    for(var i = 0; i < placingPiece.length && !blockToLeft; i++){
+        if(placingPiece[i].xpos - 1 < 0){
+            //we're going to hit the left side wall
+            blockToLeft = true;
+            break;
+        }else{
+            //we're going to hit another block that is on the left
+            for(var j = 0; j < placedPieces.length; j++){
+                if(placedPieces[j].xpos == placingPiece[i].xpos - 1 && placedPieces[j].ypos == placingPiece[i].ypos){
+                    //there's a block to the left of us
+                    blockToLeft = true;
+                    break;
+                }
+            }
+        }
     }
     
-    if(farthestLeftPiece - blockSizeXpx >= 0){
+    if(!blockToLeft){
         for(var i = 0; i < placingPiece.length; i++){
             placingPiece[i].xpos -= 1;
         }
         redrawAllBlocks()
     }
-    
-    
 }
 
 function rotatePiece(){
@@ -268,43 +283,29 @@ function rotatePiece(){
 }
 
 function dropPiece(){
-    dropInterval = setInterval(oneDownPiece, 10);
+    dropInterval = setInterval(oneDownPiece, 10); //TODO this needs to be fixed
 }
 
 function oneDownPiece(){
     
     var blockBelow = false;
-    /*
-    //check if the floor is beneath us
-    for(var i = 0; i < placingPiece.length; i++){
-        if(placingPiece[i].y + blockSizeYpx * 2> GAME_HEIGHTpx){
-            cantGoDownNoMore = true;
+    
+    for(var i = 0; i < placingPiece.length && !blockBelow; i++){
+        if(placingPiece[i].ypos + 1 >= GAME_BOARD_HEIGHT){
+            //we're going to hit the floor!
+            blockBelow = true;
             break;
+        }else{
+            //let's check if there's another block below us that is placed already
+            for(var j = 0; j < placedPieces.length; j++){
+                if(placedPieces[j].xpos == placingPiece[i].xpos && placedPieces[j].ypos == placingPiece[i].ypos + 1){
+                    //there's a block below us
+                    blockBelow = true;
+                    break;
+                }
+            }
         }
-        
     }
-    //check if any other blocks are directly beneath us
-    for(var i = 0; i < placingPiece.length && !cantGoDownNoMore; i++){
-        //coords of the block below us:
-        var x = placingPiece[i].x;
-        var y = placingPiece[i].y + blockSizeYpx;
-        
-        //make sure it's not one of our own pieces:
-        for(var j = 0; j < placingPiece.length; j++){
-            if(i == j) continue;
-            if(placingPiece[j].x - x < .01 && placingPiece[j].y - y < .01){
-                //it's ourself, no worries
-            }
-        }
-        
-        //now we check if it's another block:
-        for(var j = 0; j < placedPieces.length; j++){
-            if(placedPieces[j].x - x < .01 && placedPieces[j].y - y < .01){
-                //a piece is below us!
-                cantGoDownNoMore = true;
-            }
-        }
-    }*/
     
     if(!blockBelow){
         for(var i = 0; i < placingPiece.length; i++){
