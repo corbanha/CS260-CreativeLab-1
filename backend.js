@@ -1,10 +1,11 @@
 
 var GAME_WIDTHpx = 480;
 var GAME_HEIGHTpx = 720;
-var GAME_BOARD_WIDTH = 12;
+var GAME_BOARD_WIDTH = 16;
 var GAME_BOARD_HEIGHT = 25;
 
 var gameTickMils = 350;
+var score = 0;
 
 var blockSizeXpx = (GAME_WIDTHpx / GAME_BOARD_WIDTH);
 var blockSizeYpx = (GAME_HEIGHTpx / GAME_BOARD_HEIGHT);
@@ -135,6 +136,11 @@ function redrawAllBlocks(){
         context.fillStyle = placedPieces[i].color;
         context.fillRect(placedPieces[i].xpos * blockSizeXpx, placedPieces[i].ypos * blockSizeYpx, placedPieces[i].blockWidth, placedPieces[i].blockHeight);
     }
+    
+    //draw the score at the top
+    context.fillStyle = "black";
+    context.font = "45px Arial";
+    context.fillText(score, 25, 50, GAME_WIDTHpx);
 }
 
 function addPiece(){
@@ -142,10 +148,14 @@ function addPiece(){
     clearInterval(dropInterval);
     
     //move the currently fooling around with pieces to the non moving array
+    
     while(placingPiece.length > 0){
         placedPieces.push(placingPiece[0]);
         placingPiece.splice(0, 1);
     }
+    
+    //check if there is a line filled
+    
     
     //create our new piece
     
@@ -160,7 +170,7 @@ function addPiece(){
     lastColor = color;
     
     var centerBlock = GAME_BOARD_WIDTH / 2;
-    var yOffset = -5;
+    var yOffset = 0;
     
     if(type == 0){
         //4 x 1
@@ -249,8 +259,6 @@ function movePieceRight(){
 }
 
 function movePieceLeft(){
-    
-    
     var blockToLeft = false;
     
     for(var i = 0; i < placingPiece.length && !blockToLeft; i++){
@@ -279,6 +287,40 @@ function movePieceLeft(){
 }
 
 function rotatePiece(){
+    //The coords of the top leftmost spot, there may not be a piece here, but it's the top left corner
+    var topXCoord = GAME_BOARD_WIDTH;
+    var topYCoord = GAME_BOARD_HEIGHT;
+    //The coords of the bottom rightmost spot
+    //var botXCoord = 0;
+    var botYCoord = 0;
+    
+    
+    for(var i = 0; i < placingPiece.length; i++){
+        if(placingPiece[i].xpos < topXCoord){
+            topXCoord = placingPiece[i].xpos;
+        }
+        
+        if(placingPiece[i].ypos < topYCoord){
+            topYCoord = placingPiece[i].ypos;
+        }
+        
+        /*if(placingPiece[i].xpos > botXCoord){
+            botXCoord = placingPiece[i].xpos;
+        }*/
+        
+        if(placingPiece[i].ypos > botYCoord){
+            botYCoord = placingPiece[i].ypos;
+        }
+    }
+    
+    var height = Math.abs(botYCoord - topYCoord);
+    
+    
+    for(var i = 0; i < placingPiece.length; i++){
+        var newXPos = height - (placingPiece[i].ypos - topYCoord) + topXCoord;
+        placingPiece[i].ypos = (placingPiece[i].xpos - topXCoord) + topYCoord;
+        placingPiece[i].xpos = newXPos;
+    }
     
 }
 
