@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
     <head lang="en">
-        <meta charset="utf-8">
         
         <!-- This is for bootstrap, to make the site look good on mobile -->
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -20,16 +19,26 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
         
         <!-- Our stylesheet -->
-        <link rel="stylesheet" href="defaultStyle.css">
+        <link rel="stylesheet" href="style.css">
         
         <!-- Our Code -->
         <script src="backend.js"></script>
         
     </head>
     <body>
-        <input type="button" onclick="test()" value="Play Tetris!" id="startButton"/>
-        <!--<canvas id="tetris_game">
+        
+        <div id = "container">
+            <div id = "heading">
+                <h1><span id="heading-text">TETRIS</span></h1>
+            </div>
             
-        </canvas>-->
+            <div id="tetris-block">
+                <input type="button" onclick="test()" 
+                value="Play Tetris!" id="startButton"/>
+                <div id="tetris"></div>
+            </div>
+            
+        </div>
+        
     </body>
 </html>

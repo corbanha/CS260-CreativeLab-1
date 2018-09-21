@@ -1,11 +1,15 @@
 
-var GAME_WIDTHpx = 480;
-var GAME_HEIGHTpx = 720;
+var GAME_WIDTHpx = 280;
+var GAME_HEIGHTpx = 430;
 var GAME_BOARD_WIDTH = 16;
 var GAME_BOARD_HEIGHT = 25;
 
+// implement levels where game ticks get faster?
+
 var gameTickMils = 350;
 var score = 0;
+
+
 
 var blockSizeXpx = (GAME_WIDTHpx / GAME_BOARD_WIDTH);
 var blockSizeYpx = (GAME_HEIGHTpx / GAME_BOARD_HEIGHT);
@@ -25,24 +29,38 @@ function test(){
     
     document.getElementById("startButton").hidden = true;
     
-    window.addEventListener("keypress", function(event){
+    window.addEventListener("keypress", function(event) {
         
-        const key = event.keyCode;
-        if(key == 27){
+        
+        // Get the key pressed. Seems inconsistent where the key
+        // pressed code comes from, but this checks both locations
+        // it should be at.
+        
+        var key = event.which || event.keyCode || 0;
+
+        // Also, implement features for controlling game for a touchscreen?
+        
+        
+        if (key == 27) {
             //escape pressed
-        }else if(key == 32){
+            
+        } else if(key == 32){
             //space
             dropPiece();
-        }else if(key == 65 || key == 37 || key == 97){
+            
+        } else if (key == 65 || key == 37 || key == 97) {
             //a or left
             movePieceLeft();
-        }else if(key == 68 || key == 39 || key == 100){
+            
+        } else if (key == 68 || key == 39 || key == 100) {
             //d or right
             movePieceRight();
-        }else if(key == 83 || key == 40 || key == 115){
+            
+        } else if (key == 83 || key == 40 || key == 115) {
             //s or down
             oneDownPiece();
-        }else if(key == 87 || key == 38 || key == 119){
+            
+        } else if (key == 87 || key == 38 || key == 119) {
             //w or up
             rotatePiece();
         }
@@ -58,7 +76,7 @@ var myGameArea = {
         this.canvas.width = GAME_WIDTHpx;
         this.canvas.height = GAME_HEIGHTpx;
         this.context = this.canvas.getContext("2d");
-        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+        document.getElementById("tetris").appendChild(this.canvas);
     },
     getContext : function(){
         return this.context;
