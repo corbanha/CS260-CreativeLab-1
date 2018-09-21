@@ -6,7 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
         
-        <title>Tetris Game</title>
+        <title>CS260 | Gamepad</title>
         
         
         <!-- Linking in Bootstrap -->
@@ -22,22 +22,34 @@
         <link rel="stylesheet" href="style.css">
         
         <!-- Our Code -->
-        <script src="backend.js"></script>
+        <script src="tetris.js"></script>
         
     </head>
     <body>
         
         <div id = "container">
             <div id = "heading">
-                <h1><span id="heading-text">TETRIS</span></h1>
+                <h1><span id="heading-text">
+                    <span id='G' class="gamepad">G</span><!--
+                    --><span id='A1' class="gamepad">A</span><!--
+                    --><span id='M' class="gamepad">M</span><!--
+                    --><span id='E' class="gamepad">E</span><!--
+                    --><span id='P' class="gamepad">P</span><!--
+                    --><span id='A2' class="gamepad">A</span><!--
+                    --><span id='D' class="gamepad">D</span>
+                    </span></h1>
             </div>
             
-            <div id="tetris-block">
-                <input type="button" onclick="test()" 
+            <div id="games-block">
+                <input type="button" onclick="tetris()" 
                 value="Play Tetris!" id="startButton"/>
-                <div id="tetris"></div>
+                <div id="game-canvas"></div>     
             </div>
-            
+        </div>
+        
+        <div id="footer">
+            <small>Made for BYU CS260 by Corban Anderson and Jacob Nuttall.
+            </small>
         </div>
         
     </body>
